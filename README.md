@@ -1,1 +1,3 @@
-This is a starter template for [Learn Next.js](https://nextjs.org/learn).
+# Ngoding Kok di Kertas
+
+Project gk jelas yang mengenerate tulisan ke gambar kertas. Dibuat menggunakan Next js
