@@ -1,5 +1,7 @@
 import { useEffect, useCallback } from "react";
 import { debounce } from "lodash";
+import { toggleModal } from "../utils/toggle-modal";
+import Modal from "../components/Modal";
 import dynamic from "next/dynamic";
 import p5Types from "p5";
 
@@ -24,7 +26,7 @@ const Home = () => {
     p5.textSize(36);
     p5.textLeading(22);
     p5.fill(30);
-    p5.text(text, 60, 82);
+    p5.text(text, 60, 85);
 
     if (save) {
       p5.saveCanvas("gambar", "jpg");
@@ -84,12 +86,14 @@ const Home = () => {
       />
       <button
         onClick={() => {
-          save = true;
+          // save = true;
+          toggleModal();
         }}
         className="ml-8 row-span-1 col-span-2 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
       >
         Simpan Gambar
       </button>
+      <Modal />
     </div>
   );
 };
