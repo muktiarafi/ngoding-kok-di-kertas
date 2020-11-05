@@ -1,39 +1,41 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useCallback } from "react";
 import { debounce } from "lodash";
 import dynamic from "next/dynamic";
 import p5Types from "p5";
 
 const Home = () => {
-  const [text, setText] = useState("");
-  const [save, setSave] = useState(false);
+  let text = "";
+  let save = false;
   let image: p5Types.Image;
   let font: p5Types.Font;
 
   const preload = (p5: p5Types) => {
     font = p5.loadFont("My_handwriting.ttf");
-    image = p5.loadImage("/paper.jpg");
+    image = p5.loadImage("/folio1.jpg");
   };
 
   const setup = (p5: p5Types, cavasParentRef: Element) => {
-    p5.createCanvas(600, 735).parent(cavasParentRef);
+    p5.createCanvas(675, 900).parent(cavasParentRef);
   };
 
   const draw = (p5: p5Types) => {
-    p5.image(image, 0, 0, 600, 735);
+    p5.image(image, 0, 0, 675, 900);
     p5.textFont(font);
     p5.textSize(36);
-    p5.textLeading(34);
-    p5.fill(40);
-    p5.text(text, 140, 110);
+    p5.textLeading(22);
+    p5.fill(30);
+    p5.text(text, 60, 82);
 
     if (save) {
       p5.saveCanvas("gambar", "jpg");
-      setSave(false);
+      save = false;
     }
   };
 
   const delayedText = useCallback(
-    debounce((q) => setText(q), 500),
+    debounce((q) => {
+      text = q;
+    }, 500),
     []
   );
 
@@ -71,17 +73,7 @@ const Home = () => {
 
   return (
     <div className="grid grid-rows-3 grid-flow-col gap-4 justify-center">
-      {!renderSketch() ? (
-        <img
-          src="/paper.jpg"
-          alt="paper"
-          width={600}
-          height={735}
-          className="row-span-4 rounded"
-        />
-      ) : (
-        renderSketch()
-      )}
+      {renderSketch()}
       <textarea
         id="text"
         className="ml-8 row-span-3 col-span-2 rounded px-4 py-2"
@@ -92,7 +84,7 @@ const Home = () => {
       />
       <button
         onClick={() => {
-          setSave(true);
+          save = true;
         }}
         className="ml-8 row-span-1 col-span-2 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
       >
