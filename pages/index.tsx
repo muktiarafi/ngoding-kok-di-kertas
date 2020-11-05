@@ -8,6 +8,7 @@ import p5Types from "p5";
 const Home = () => {
   let text = "";
   let save = false;
+  let fileName = "";
   let image: p5Types.Image;
   let font: p5Types.Font;
 
@@ -29,9 +30,14 @@ const Home = () => {
     p5.text(text, 60, 85);
 
     if (save) {
-      p5.saveCanvas("gambar", "jpg");
+      p5.saveCanvas(fileName, "jpg");
       save = false;
     }
+  };
+
+  const saveFileName = (name: string) => {
+    fileName = name;
+    save = true;
   };
 
   const delayedText = useCallback(
@@ -93,7 +99,7 @@ const Home = () => {
       >
         Simpan Gambar
       </button>
-      <Modal />
+      <Modal onSaveCallback={saveFileName} />
     </div>
   );
 };

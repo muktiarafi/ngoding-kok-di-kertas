@@ -1,7 +1,12 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { toggleModal } from "../utils/toggle-modal";
 
-const Modal = () => {
+type ModalProps = {
+  onSaveCallback(fileName: string): void;
+};
+
+const Modal = ({ onSaveCallback }: ModalProps) => {
+  const [fileName, setFileName] = useState("");
   useEffect(() => {
     window.addEventListener(
       "keydown",
@@ -57,6 +62,10 @@ const Modal = () => {
           <input
             type="text"
             className="bg-gray-200 rounded border-2 w-full py-2 px-4"
+            value={fileName}
+            onChange={(e) => {
+              setFileName(e.target.value);
+            }}
           />
 
           <div className="flex justify-end pt-2">
@@ -70,7 +79,9 @@ const Modal = () => {
             </button>
             <button
               onClick={() => {
+                onSaveCallback(fileName);
                 toggleModal();
+                setFileName("");
               }}
               className="modal-close px-4 bg-indigo-500 p-3 rounded-lg text-white hover:bg-indigo-400"
             >
