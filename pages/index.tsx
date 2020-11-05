@@ -1,4 +1,5 @@
-import { useEffect, useState, FormEvent } from "react";
+import { useEffect, useState, useCallback } from "react";
+import { debounce } from "lodash";
 import dynamic from "next/dynamic";
 import p5Types from "p5";
 
@@ -19,6 +20,11 @@ const Home = () => {
     p5.fill(40);
     p5.text(text, 140, 100);
   };
+
+  const delayedText = useCallback(
+    debounce((q) => setText(q), 500),
+    []
+  );
 
   const renderSketch = () => {
     if (typeof window !== "undefined") {
@@ -68,7 +74,7 @@ const Home = () => {
         className="ml-8 row-span-3 col-span-2 rounded px-4 py-2"
         cols={50}
         onChange={(e) => {
-          setText(e.target.value);
+          delayedText(e.target.value);
         }}
       />
       <button className="ml-8 row-span-1 col-span-2 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
