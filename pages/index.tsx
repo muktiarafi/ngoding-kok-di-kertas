@@ -10,19 +10,24 @@ const Home = () => {
   let save = false;
   let fileName = "";
   let image: p5Types.Image;
+  let imageX = 0;
+  let imageY = 0;
   let font: p5Types.Font;
 
   const preload = (p5: p5Types) => {
     font = p5.loadFont("My_handwriting.ttf");
-    image = p5.loadImage("/folio1.jpg");
+    image = p5.loadImage("/folio1.jpg", (p1) => {
+      imageX = p1.width;
+      imageY = p1.height;
+    });
   };
 
   const setup = (p5: p5Types, cavasParentRef: Element) => {
-    p5.createCanvas(675, 900).parent(cavasParentRef);
+    p5.createCanvas(imageX, imageY).parent(cavasParentRef);
   };
 
   const draw = (p5: p5Types) => {
-    p5.image(image, 0, 0, 675, 900);
+    p5.image(image, 0, 0, imageX, imageY);
     p5.textFont(font);
     p5.textSize(36);
     p5.textLeading(22);
