@@ -1,9 +1,11 @@
 import { useEffect, useCallback } from "react";
 import { debounce } from "lodash";
 import { toggleModal } from "../utils/toggle-modal";
+import { SketchConfig } from "../utils/interfaces/sketch-config";
 import SaveModal from "../components/SaveModal";
 import dynamic from "next/dynamic";
 import p5Types from "p5";
+import ConfigurationModal from "../components/ConfigurationModal";
 
 const Home = () => {
   let text = "";
@@ -13,6 +15,13 @@ const Home = () => {
   let imageX = 0;
   let imageY = 0;
   let font: p5Types.Font;
+  let textConfig: SketchConfig = {
+    x: 60,
+    y: 85,
+    fill: 30,
+    textLeading: 22,
+    textSize: 36,
+  };
 
   const preload = (p5: p5Types) => {
     font = p5.loadFont("My_handwriting.ttf");
@@ -29,15 +38,24 @@ const Home = () => {
   const draw = (p5: p5Types) => {
     p5.image(image, 0, 0, imageX, imageY);
     p5.textFont(font);
-    p5.textSize(36);
-    p5.textLeading(22);
-    p5.fill(30);
-    p5.text(text, 60, 85);
+    p5.textSize(textConfig.textSize);
+    p5.textLeading(textConfig.textLeading);
+    p5.fill(textConfig.fill);
+    p5.text(text, textConfig.x, textConfig.y);
 
     if (save) {
       p5.saveCanvas(fileName, "jpg");
       save = false;
     }
+  };
+
+  const setNewConfig = (config: SketchConfig) => {
+    textConfig.x = config.x;
+    textConfig.y = config.y;
+    textConfig.fill = config.fill;
+    textConfig.textLeading = config.textLeading;
+    textConfig.textSize = config.textSize;
+    localStorage.setItem("text-config", JSON.stringify(textConfig));
   };
 
   const saveFileName = (name: string) => {
@@ -68,6 +86,15 @@ const Home = () => {
   };
 
   useEffect(() => {
+    const savedConfig = localStorage.getItem("text-config");
+    if (savedConfig) {
+      const config: SketchConfig = JSON.parse(savedConfig);
+      textConfig.x = config.x;
+      textConfig.y = config.y;
+      textConfig.fill = config.fill;
+      textConfig.textLeading = config.textLeading;
+      textConfig.textSize = config.textSize;
+    }
     (document.getElementById("text") as HTMLTextAreaElement).addEventListener(
       "keydown",
       function (e) {
@@ -95,15 +122,30 @@ const Home = () => {
           delayedText(e.target.value);
         }}
       />
-      <button
-        onClick={() => {
-          // save = true;
-          toggleModal("save-modal");
-        }}
-        className="ml-8 row-span-1 col-span-2 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-      >
-        Simpan Gambar
-      </button>
+      <div className="flex-auto ml-8 row-span-1 col-span-2">
+        <button
+          onClick={() => {
+            // save = true;
+            toggleModal("config-modal");
+          }}
+          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-1/2"
+        >
+          Atur Text
+        </button>
+        <button
+          onClick={() => {
+            // save = true;
+            toggleModal("save-modal");
+          }}
+          className="row-span-1 col-span-2 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-1/2"
+        >
+          Simpan Gambar
+        </button>
+      </div>
+      <ConfigurationModal
+        configInit={textConfig}
+        onSaveCallback={setNewConfig}
+      />
       <SaveModal onSaveCallback={saveFileName} />
     </div>
   );
