@@ -1,12 +1,18 @@
-import { useEffect, useState } from "react";
+import { FunctionComponent, useEffect } from "react";
 import { toggleModal } from "../utils/toggle-modal";
 
 type ModalProps = {
-  onSaveCallback(fileName: string): void;
+  id: string;
+  title: string;
+  onSaveCallback(): void;
 };
 
-const Modal = ({ onSaveCallback }: ModalProps) => {
-  const [fileName, setFileName] = useState("");
+const Modal: FunctionComponent<ModalProps> = ({
+  id,
+  title,
+  onSaveCallback,
+  children,
+}) => {
   useEffect(() => {
     window.addEventListener(
       "keydown",
@@ -19,7 +25,7 @@ const Modal = ({ onSaveCallback }: ModalProps) => {
           isEscape = ev.code === 27;
         }
         if (isEscape && document.body.classList.contains("modal-active")) {
-          toggleModal();
+          toggleModal(id);
         }
       },
       false
@@ -27,10 +33,13 @@ const Modal = ({ onSaveCallback }: ModalProps) => {
   }, []);
 
   return (
-    <div className="modal opacity-0 pointer-events-none fixed w-full h-full top-0 left-0 flex items-center justify-center">
-      <div className="modal-overlay absolute w-full h-full bg-gray-900 opacity-50"></div>
+    <div
+      id={id}
+      className="modal opacity-0 pointer-events-none fixed w-full h-full top-0 left-0 flex items-center justify-center"
+    >
+      <div className="absolute w-full h-full bg-gray-900 opacity-50"></div>
 
-      <div className="modal-container bg-white w-11/12 md:max-w-md mx-auto rounded shadow-lg z-50 overflow-y-auto">
+      <div className="bg-white w-11/12 md:max-w-md mx-auto rounded shadow-lg z-50 overflow-y-auto">
         <div className="modal-close absolute top-0 right-0 cursor-pointer flex flex-col items-center mt-4 mr-4 text-white text-sm z-50">
           <svg
             className="fill-current text-white"
@@ -43,10 +52,10 @@ const Modal = ({ onSaveCallback }: ModalProps) => {
           </svg>
           <span className="text-sm">(Esc)</span>
         </div>
-        <div className="modal-content py-4 text-left px-6">
+        <div className="py-4 text-left px-6">
           <div className="flex justify-between items-center pb-3">
-            <p className="text-2xl font-bold">Tuliskan Nama File</p>
-            <div className="modal-close cursor-pointer z-50">
+            <p className="text-2xl font-bold">{title}</p>
+            <div className="cursor-pointer z-50">
               <svg
                 className="fill-current text-black"
                 xmlns="http://www.w3.org/2000/svg"
@@ -58,20 +67,11 @@ const Modal = ({ onSaveCallback }: ModalProps) => {
               </svg>
             </div>
           </div>
-
-          <input
-            type="text"
-            className="bg-gray-200 rounded border-2 w-full py-2 px-4"
-            value={fileName}
-            onChange={(e) => {
-              setFileName(e.target.value);
-            }}
-          />
-
+          {children}
           <div className="flex justify-end pt-2">
             <button
               onClick={() => {
-                toggleModal();
+                toggleModal(id);
               }}
               className="px-4 bg-transparent p-3 rounded-lg text-indigo-500 hover:bg-gray-100 hover:text-indigo-400 mr-2"
             >
@@ -79,11 +79,10 @@ const Modal = ({ onSaveCallback }: ModalProps) => {
             </button>
             <button
               onClick={() => {
-                onSaveCallback(fileName);
-                toggleModal();
-                setFileName("");
+                onSaveCallback();
+                toggleModal(id);
               }}
-              className="modal-close px-4 bg-indigo-500 p-3 rounded-lg text-white hover:bg-indigo-400"
+              className="px-4 bg-indigo-500 p-3 rounded-lg text-white hover:bg-indigo-400"
             >
               Save
             </button>
