@@ -1,13 +1,22 @@
 import { useEffect, useCallback } from "react";
+import { connect } from "react-redux";
 import { debounce } from "lodash";
 import { toggleModal } from "../utils/toggle-modal";
 import { SketchConfig } from "../utils/interfaces/sketch-config";
 import SaveModal from "../components/SaveModal";
+import { changeConfig } from "../redux/actions";
+import { StoreState } from "../redux/reducers";
+import { defaultConfig, imageConfig } from "../utils/default-config";
 import dynamic from "next/dynamic";
 import p5Types from "p5";
 import ConfigurationModal from "../components/ConfigurationModal";
 
-const Home = () => {
+type HomeProps = {
+  imageConfig: imageConfig;
+  changeConfig: typeof changeConfig;
+};
+
+const Home = ({ imageConfig, changeConfig }: HomeProps) => {
   let text = "";
   let save = false;
   let fileName = "";
@@ -15,17 +24,11 @@ const Home = () => {
   let imageX = 0;
   let imageY = 0;
   let font: p5Types.Font;
-  let textConfig: SketchConfig = {
-    x: 60,
-    y: 85,
-    fill: 30,
-    textLeading: 22,
-    textSize: 36,
-  };
+  let textConfig: SketchConfig = imageConfig.sketchConfig;
 
   const preload = (p5: p5Types) => {
     font = p5.loadFont("My_handwriting.ttf");
-    image = p5.loadImage("/folio1.jpg", (p1) => {
+    image = p5.loadImage(imageConfig.imagePath, (p1) => {
       imageX = p1.width;
       imageY = p1.height;
     });
@@ -128,7 +131,16 @@ const Home = () => {
             // save = true;
             toggleModal("config-modal");
           }}
-          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-1/2"
+          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-1/3"
+        >
+          Ganti Gambar
+        </button>
+        <button
+          onClick={() => {
+            // save = true;
+            changeConfig(defaultConfig[1]);
+          }}
+          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-1/3"
         >
           Atur Text
         </button>
@@ -137,7 +149,7 @@ const Home = () => {
             // save = true;
             toggleModal("save-modal");
           }}
-          className="row-span-1 col-span-2 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-1/2"
+          className="row-span-1 col-span-2 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-1/3"
         >
           Simpan Gambar
         </button>
@@ -151,4 +163,14 @@ const Home = () => {
   );
 };
 
-export default Home;
+const mapStateToProps = ({ config }: StoreState): { config: imageConfig } => {
+  return {
+    config,
+  };
+};
+
+const mapDispatchToProps = {
+  changeConfig,
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Home);
