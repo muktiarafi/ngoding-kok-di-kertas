@@ -12,11 +12,11 @@ import p5Types from "p5";
 import ConfigurationModal from "../components/ConfigurationModal";
 
 type HomeProps = {
-  imageConfig: imageConfig;
+  config: imageConfig;
   changeConfig: typeof changeConfig;
 };
 
-const Home = ({ imageConfig, changeConfig }: HomeProps) => {
+const Home = ({ config, changeConfig }: HomeProps) => {
   let text = "";
   let save = false;
   let fileName = "";
@@ -24,11 +24,11 @@ const Home = ({ imageConfig, changeConfig }: HomeProps) => {
   let imageX = 0;
   let imageY = 0;
   let font: p5Types.Font;
-  let textConfig: SketchConfig = imageConfig.sketchConfig;
+  let textConfig: SketchConfig = config.sketchConfig;
 
   const preload = (p5: p5Types) => {
     font = p5.loadFont("My_handwriting.ttf");
-    image = p5.loadImage(imageConfig.imagePath, (p1) => {
+    image = p5.loadImage(config.imagePath, (p1) => {
       imageX = p1.width;
       imageY = p1.height;
     });
@@ -128,8 +128,7 @@ const Home = ({ imageConfig, changeConfig }: HomeProps) => {
       <div className="flex-auto ml-8 row-span-1 col-span-2">
         <button
           onClick={() => {
-            // save = true;
-            toggleModal("config-modal");
+            changeConfig(defaultConfig[1]);
           }}
           className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-1/3"
         >
@@ -137,8 +136,7 @@ const Home = ({ imageConfig, changeConfig }: HomeProps) => {
         </button>
         <button
           onClick={() => {
-            // save = true;
-            changeConfig(defaultConfig[1]);
+            toggleModal("config-modal");
           }}
           className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-1/3"
         >
@@ -146,7 +144,6 @@ const Home = ({ imageConfig, changeConfig }: HomeProps) => {
         </button>
         <button
           onClick={() => {
-            // save = true;
             toggleModal("save-modal");
           }}
           className="row-span-1 col-span-2 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-1/3"

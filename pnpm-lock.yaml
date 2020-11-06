@@ -1,6 +1,7 @@
 dependencies:
   lodash: 4.17.20
   next: 10.0.1_41298cb3a048b17c7a8f1acc3fd9409c
+  next-redux-wrapper: 6.0.2_85951151558b8f16ba43913b68081fac
   p5: 1.1.9
   react: 16.13.1
   react-dom: 16.13.1_react@16.13.1
@@ -3874,6 +3875,18 @@ packages:
     dev: false
     resolution:
       integrity: sha512-Yd3UES5mWCSqR+qNT93S3UoYUkqAZ9lLg8a7g9rimsWmYGK8cVToA4/sF3RrshdyV3sAGMXVUmpMYOw+dLpOuw==
+  /next-redux-wrapper/6.0.2_85951151558b8f16ba43913b68081fac:
+    dependencies:
+      next: 10.0.1_41298cb3a048b17c7a8f1acc3fd9409c
+      react: 16.13.1
+      react-redux: 7.2.2_49f644e2f7de4182503f8b93abece808
+    dev: false
+    peerDependencies:
+      next: '>=9.0.0'
+      react: '*'
+      react-redux: '*'
+    resolution:
+      integrity: sha512-I9CnIYhQwI/qEoNdc9VAPjIyuq4rFFhCTa4rKhoDHWEVHGB1DXZy8TAyGpwvWizESd8IoTI/OKlP6bFpCbXsOw==
   /next-tick/1.0.0:
     dev: false
     resolution:
@@ -6119,6 +6132,7 @@ specifiers:
   '@types/react-redux': ^7.1.11
   lodash: ^4.17.20
   next: ^10.0.0
+  next-redux-wrapper: ^6.0.2
   p5: ^1.1.9
   postcss-preset-env: ^6.7.0
   react: 16.13.1

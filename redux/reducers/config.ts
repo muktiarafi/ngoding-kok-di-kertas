@@ -1,4 +1,5 @@
 import { ActionTypes, ConfigAction } from "../actions";
+import { HYDRATE } from "next-redux-wrapper";
 import { imageConfig, defaultConfig } from "../../utils/default-config";
 
 export const configReducers = (
