@@ -1,34 +1,44 @@
-import { useState } from "react";
+import { useState, useEffect, useRef, ChangeEvent } from "react";
+import { connect } from "react-redux";
+import { StoreState } from "../redux/reducers";
+import { imageConfig } from "../utils/default-config";
 import Modal from "./Modal";
 import { SketchConfig } from "../utils/interfaces/sketch-config";
 
 type ConfigurationModalProps = {
-  configInit: SketchConfig;
+  config: imageConfig;
   onSaveCallback(config: SketchConfig): void;
 };
 
 const ConfigurationModal = ({
-  configInit,
+  config,
   onSaveCallback,
 }: ConfigurationModalProps) => {
-  const [x, setX] = useState(configInit.x);
-  const [y, setY] = useState(configInit.y);
-  const [fill, setFill] = useState(configInit.fill);
-  const [leading, setLeading] = useState(configInit.textLeading);
-  const [size, setSize] = useState(configInit.textSize);
+  const reduxRef = useRef<SketchConfig>(config.sketchConfig);
+  const [inputConfig, setInputConfig] = useState<SketchConfig>(
+    config.sketchConfig
+  );
+
+  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setInputConfig({
+      ...inputConfig,
+      [e.target.name]: Number.parseInt(e.target.value),
+    });
+  };
+
+  useEffect(() => {
+    if (reduxRef.current !== config.sketchConfig) {
+      setInputConfig(config.sketchConfig);
+      reduxRef.current = config.sketchConfig;
+    }
+  });
 
   return (
     <Modal
       id="config-modal"
       title="Atur Teks"
       onSaveCallback={() => {
-        onSaveCallback({
-          x,
-          y,
-          fill,
-          textLeading: leading,
-          textSize: size,
-        });
+        onSaveCallback(inputConfig);
       }}
     >
       <div className="mb-4">
@@ -43,8 +53,8 @@ const ConfigurationModal = ({
           type="number"
           className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
           placeholder="x-coordinate"
-          value={x}
-          onChange={(e) => setX(Number.parseInt(e.target.value))}
+          value={inputConfig.x}
+          onChange={handleInputChange}
         />
       </div>
       <div className="mb-4">
@@ -59,8 +69,8 @@ const ConfigurationModal = ({
           type="number"
           className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
           placeholder="Y-coordinate"
-          value={y}
-          onChange={(e) => setY(Number.parseInt(e.target.value))}
+          value={inputConfig.y}
+          onChange={handleInputChange}
         />
       </div>
       <div className="mb-4">
@@ -75,8 +85,8 @@ const ConfigurationModal = ({
           type="number"
           className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
           placeholder="Text Fill"
-          value={fill}
-          onChange={(e) => setFill(Number.parseInt(e.target.value))}
+          value={inputConfig.fill}
+          onChange={handleInputChange}
         />
       </div>
       <div className="mb-4">
@@ -87,12 +97,12 @@ const ConfigurationModal = ({
           Text Leading
         </label>
         <input
-          name="leading"
+          name="textLeading"
           type="number"
           className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
           placeholder="Text Leading"
-          value={leading}
-          onChange={(e) => setLeading(Number.parseInt(e.target.value))}
+          value={inputConfig.textLeading}
+          onChange={handleInputChange}
         />
       </div>
       <div className="mb-4">
@@ -103,16 +113,22 @@ const ConfigurationModal = ({
           Text Size
         </label>
         <input
-          name="size"
+          name="textSize"
           type="number"
           className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
           placeholder="x-coordinate"
-          value={size}
-          onChange={(e) => setSize(Number.parseInt(e.target.value))}
+          value={inputConfig.textSize}
+          onChange={handleInputChange}
         />
       </div>
     </Modal>
   );
 };
 
-export default ConfigurationModal;
+const mapStateToProps = ({ config }: StoreState): { config: imageConfig } => {
+  return {
+    config,
+  };
+};
+
+export default connect(mapStateToProps)(ConfigurationModal);

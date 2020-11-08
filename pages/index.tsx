@@ -1,4 +1,4 @@
-import { useEffect, useCallback } from "react";
+import { useEffect, useCallback, useState } from "react";
 import { connect } from "react-redux";
 import { debounce } from "lodash";
 import { toggleModal } from "../utils/toggle-modal";
@@ -16,8 +16,10 @@ type HomeProps = {
   changeConfig: typeof changeConfig;
 };
 
+let text = "";
+
 const Home = ({ config, changeConfig }: HomeProps) => {
-  let text = "";
+  const [select, setSelect] = useState(0);
   let save = false;
   let fileName = "";
   let image: p5Types.Image;
@@ -44,6 +46,7 @@ const Home = ({ config, changeConfig }: HomeProps) => {
     p5.textSize(textConfig.textSize);
     p5.textLeading(textConfig.textLeading);
     p5.fill(textConfig.fill);
+    console.log("text =", text);
     p5.text(text, textConfig.x, textConfig.y);
 
     if (save) {
@@ -52,12 +55,8 @@ const Home = ({ config, changeConfig }: HomeProps) => {
     }
   };
 
-  const setNewConfig = (config: SketchConfig) => {
-    textConfig.x = config.x;
-    textConfig.y = config.y;
-    textConfig.fill = config.fill;
-    textConfig.textLeading = config.textLeading;
-    textConfig.textSize = config.textSize;
+  const setNewConfig = (newConfig: SketchConfig) => {
+    textConfig = newConfig;
     localStorage.setItem("text-config", JSON.stringify(textConfig));
   };
 
@@ -69,6 +68,7 @@ const Home = ({ config, changeConfig }: HomeProps) => {
   const delayedText = useCallback(
     debounce((q) => {
       text = q;
+      console.log(text);
     }, 500),
     []
   );
@@ -88,16 +88,40 @@ const Home = ({ config, changeConfig }: HomeProps) => {
     return null;
   };
 
+  const renderDropDown = () => {
+    const options = defaultConfig.map((cnfg, i) => {
+      return (
+        <option key={cnfg.id} value={i}>
+          {cnfg.name}
+        </option>
+      );
+    });
+    return (
+      <div className="inline-block">
+        <select
+          value={select}
+          onChange={(e) => {
+            setSelect(Number.parseInt(e.target.value));
+            changeConfig(defaultConfig[Number.parseInt(e.target.value)]);
+          }}
+          className="text-white block appearance-none w-full bg-blue-500 border border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline w-1/3"
+        >
+          {options}
+        </select>
+        <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+          <svg
+            className="fill-current h-4 w-4"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 20 20"
+          >
+            <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
+          </svg>
+        </div>
+      </div>
+    );
+  };
+
   useEffect(() => {
-    const savedConfig = localStorage.getItem("text-config");
-    if (savedConfig) {
-      const config: SketchConfig = JSON.parse(savedConfig);
-      textConfig.x = config.x;
-      textConfig.y = config.y;
-      textConfig.fill = config.fill;
-      textConfig.textLeading = config.textLeading;
-      textConfig.textSize = config.textSize;
-    }
     (document.getElementById("text") as HTMLTextAreaElement).addEventListener(
       "keydown",
       function (e) {
@@ -126,14 +150,7 @@ const Home = ({ config, changeConfig }: HomeProps) => {
         }}
       />
       <div className="flex-auto ml-8 row-span-1 col-span-2">
-        <button
-          onClick={() => {
-            changeConfig(defaultConfig[1]);
-          }}
-          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-1/3"
-        >
-          Ganti Gambar
-        </button>
+        {renderDropDown()}
         <button
           onClick={() => {
             toggleModal("config-modal");
@@ -151,10 +168,7 @@ const Home = ({ config, changeConfig }: HomeProps) => {
           Simpan Gambar
         </button>
       </div>
-      <ConfigurationModal
-        configInit={textConfig}
-        onSaveCallback={setNewConfig}
-      />
+      <ConfigurationModal onSaveCallback={setNewConfig} />
       <SaveModal onSaveCallback={saveFileName} />
     </div>
   );

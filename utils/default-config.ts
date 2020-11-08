@@ -2,6 +2,7 @@ import { SketchConfig } from "./interfaces/sketch-config";
 
 export interface imageConfig {
   id: number;
+  name: string;
   imagePath: string;
   sketchConfig: SketchConfig;
 }
@@ -9,6 +10,7 @@ export interface imageConfig {
 export const defaultConfig: imageConfig[] = [
   {
     id: 1,
+    name: "Folio 1",
     imagePath: "/folio1.jpg",
     sketchConfig: {
       x: 60,
@@ -20,6 +22,7 @@ export const defaultConfig: imageConfig[] = [
   },
   {
     id: 2,
+    name: "Kertas Biasa",
     imagePath: "/paper.jpg",
     sketchConfig: {
       x: 80,
