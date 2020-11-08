@@ -57,7 +57,6 @@ const Home = ({ config, changeConfig }: HomeProps) => {
 
   const setNewConfig = (newConfig: SketchConfig) => {
     textConfig = newConfig;
-    localStorage.setItem("text-config", JSON.stringify(textConfig));
   };
 
   const saveFileName = (name: string) => {
