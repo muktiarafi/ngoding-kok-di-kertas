@@ -46,7 +46,6 @@ const Home = ({ config, changeConfig }: HomeProps) => {
     p5.textSize(textConfig.textSize);
     p5.textLeading(textConfig.textLeading);
     p5.fill(textConfig.fill);
-    console.log("text =", text);
     p5.text(text, textConfig.x, textConfig.y);
 
     if (save) {
@@ -67,7 +66,6 @@ const Home = ({ config, changeConfig }: HomeProps) => {
   const delayedText = useCallback(
     debounce((q) => {
       text = q;
-      console.log(text);
     }, 500),
     []
   );
